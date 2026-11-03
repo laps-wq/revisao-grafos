@@ -3,6 +3,7 @@
   'use strict';
   const { $, $$, h, renderMCQ, renderClassify, renderChecklist, renderQA, lerProgresso, gravarProgresso } = window.UI;
   const MODULOS = window.MODULOS || [];
+  const AULAS = window.AULAS || [];
   const ABAS = [['conteudo', 'Conteúdo'], ['exemplos', 'Exemplos'], ['atividades', 'Atividades'], ['desafios', 'Desafios']];
   const GRUPOS = ['Base', 'Caminhos e árvores', 'Modelagem e complexidade', 'Prova'];
   let prog = lerProgresso();
@@ -12,6 +13,7 @@
   function rotaAtual() {
     const hs = decodeURIComponent(location.hash.replace(/^#/, ''));
     if (!hs || hs === 'inicio') return { pag: 'inicio' };
+    if (hs === 'aulas') return { pag: 'aulas' };
     for (const m of MODULOS) {
       if (hs === m.id) return { pag: 'mod', m, aba: 'conteudo' };
       for (const [a] of ABAS) if (hs === `${m.id}-${a}`) return { pag: 'mod', m, aba: a };
@@ -38,7 +40,8 @@
   function montaLateral() {
     const nav = $('#lateral-nav');
     nav.replaceChildren();
-    nav.append(h('a', { href: '#inicio', class: 'lat-inicio' }, 'Início'));
+    nav.append(h('a', { href: '#inicio', class: 'lat-inicio', 'data-pag': 'inicio' }, 'Início'));
+    if (AULAS.length) nav.append(h('a', { href: '#aulas', class: 'lat-inicio lat-aulas', 'data-pag': 'aulas' }, 'Aulas do semestre'));
     GRUPOS.forEach((g) => {
       const ms = MODULOS.filter((m) => m.grupo === g);
       if (!ms.length) return;
@@ -94,13 +97,49 @@
       renderMCQ(area, q, (ok) => registra(m.id, i, ok), { titulo: `${m.curto} · desafio ${i + 1}` });
     };
     relampago.append(area, h('button', { class: 'btn', type: 'button', onclick: sorteia }, 'Sortear outra'));
-    main.replaceChildren(hero, comecar, h('section', { class: 'bloco' }, h('h2', {}, 'Módulos'), grade), relampago);
+    const aulas = AULAS.length ? h('section', { class: 'bloco bloco-aulas' },
+      h('div', {},
+        h('h2', {}, 'Aulas do semestre'),
+        h('p', { class: 'sub' }, `Os slides das ${AULAS.length} aulas de Teoria dos Grafos deste semestre, organizados por assunto, para abrir no navegador ou baixar.`)),
+      h('a', { href: '#aulas', class: 'btn' }, 'Ver as aulas')) : null;
+    main.replaceChildren(...[hero, comecar, aulas, h('section', { class: 'bloco' }, h('h2', {}, 'Módulos'), grade), relampago].filter(Boolean));
     sorteia();
     document.title = 'Revisão de Teoria dos Grafos · ENADE';
   }
   function trilha(tit, txt, ids) {
     return h('div', { class: 'trilha' }, h('h3', {}, tit), h('p', {}, txt),
       h('div', { class: 'trilha-links' }, ids.map((id) => { const m = MODULOS.find((x) => x.id === id); return m ? h('a', { href: link(m) }, m.curto) : null; })));
+  }
+
+  // ------------------------------------------------------------------- aulas ---
+  const mb = (kb) => (kb >= 1000 ? `${(kb / 1024).toFixed(1).replace('.', ',')} MB` : `${kb} KB`);
+  function paginaAulas(main) {
+    const cab = h('header', { class: 'mod-cab' },
+      h('p', { class: 'olho' }, 'Material da disciplina · 2026.2'),
+      h('h1', {}, 'Aulas do semestre'),
+      h('p', { class: 'lead' }, 'Slides das aulas de Teoria dos Grafos da Profª Laura Pacífico na CESAR School, de agosto a outubro de 2026. Cada aula indica o módulo de revisão do mesmo assunto.'));
+    const temas = [...new Set(AULAS.map((a) => a.tema))];
+    const corpo = h('div', { class: 'aulas' });
+    temas.forEach((tema) => {
+      const lista = h('ul', { class: 'aulas-lista' });
+      AULAS.filter((a) => a.tema === tema).forEach((a) => {
+        const m = a.mod && MODULOS.find((x) => x.id === a.mod);
+        lista.append(h('li', { class: 'aula' },
+          h('span', { class: 'aula-n', 'aria-hidden': 'true' }, a.n),
+          h('div', { class: 'aula-txt' },
+            h('h3', {}, h('a', { href: a.arq, target: '_blank', rel: 'noopener' }, `Aula ${a.n} · ${a.tit}`)),
+            h('p', {}, a.desc),
+            h('p', { class: 'aula-meta' },
+              `${a.pags} ${a.html ? 'slides' : 'páginas'} · ${a.html ? 'página HTML' : 'PDF'} · ${mb(a.kb)}`,
+              m ? h('a', { href: link(m), class: 'aula-mod' }, `Revisar: ${m.curto}`) : null)),
+          h('div', { class: 'aula-acoes' },
+            h('a', { href: a.arq, target: '_blank', rel: 'noopener', class: 'btn-sec', 'aria-label': `Abrir a Aula ${a.n}` }, 'Abrir'),
+            h('a', { href: a.arq, download: '', class: 'btn-sec', 'aria-label': `Baixar a Aula ${a.n}` }, 'Baixar'))));
+      });
+      corpo.append(h('section', { class: 'aulas-tema' }, h('h2', {}, tema), lista));
+    });
+    main.replaceChildren(cab, corpo);
+    document.title = 'Aulas do semestre · Revisão de Grafos';
   }
 
   // ------------------------------------------------------------------ módulo ---
@@ -179,6 +218,7 @@
       m.exemplos.forEach((x) => indice.push({ m, aba: 'exemplos', tit: x.t, txt: tira(x.d) }));
       m.desafios.forEach((q, i) => indice.push({ m, aba: 'desafios', tit: `Desafio ${i + 1}`, txt: tira(q.enun) }));
     });
+    AULAS.forEach((a) => indice.push({ href: '#aulas', rot: 'Aulas do semestre', tit: `Aula ${a.n} · ${a.tit}`, txt: a.desc }));
   }
   const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   function busca(termo) {
@@ -192,8 +232,8 @@
     achados.forEach((x) => {
       const i = norm(x.txt).indexOf(t);
       const trecho = i >= 0 ? '…' + x.txt.slice(Math.max(0, i - 40), i + 70) + '…' : x.txt.slice(0, 100) + '…';
-      box.append(h('a', { href: link(x.m, x.aba), class: 'busca-item', onclick: () => { box.hidden = true; $('#busca').value = ''; } },
-        h('span', { class: 'busca-mod' }, `${x.m.curto} · ${ABAS.find((a) => a[0] === x.aba)[1]}`), h('span', { class: 'busca-tit' }, x.tit), h('span', { class: 'busca-trecho' }, trecho)));
+      box.append(h('a', { href: x.href || link(x.m, x.aba), class: 'busca-item', onclick: () => { box.hidden = true; $('#busca').value = ''; } },
+        h('span', { class: 'busca-mod' }, x.rot || `${x.m.curto} · ${ABAS.find((a) => a[0] === x.aba)[1]}`), h('span', { class: 'busca-tit' }, x.tit), h('span', { class: 'busca-trecho' }, trecho)));
     });
     box.hidden = false;
   }
@@ -211,14 +251,63 @@
     });
   }
 
+  // ------------------------------------------------- barra lateral recolhível ---
+  // No computador, o botão ☰ recolhe e mostra a barra lateral, e a escolha fica salva no navegador.
+  // No celular, o mesmo botão abre a gaveta com a lista de módulos.
+  const telaGrande = matchMedia('(min-width: 981px)');
+  function rotulaMenu() {
+    const btn = $('#menu');
+    if (telaGrande.matches) {
+      const rec = document.body.classList.contains('lat-recolhida');
+      const txt = rec ? 'Mostrar a barra lateral' : 'Recolher a barra lateral';
+      btn.setAttribute('aria-expanded', String(!rec));
+      btn.setAttribute('aria-label', txt);
+      btn.title = txt;
+    } else {
+      const ab = document.body.classList.contains('menu-aberto');
+      btn.setAttribute('aria-expanded', String(ab));
+      btn.setAttribute('aria-label', ab ? 'Fechar a lista de módulos' : 'Abrir a lista de módulos');
+      btn.removeAttribute('title');
+    }
+  }
+  function iniciaLateral() {
+    let salvo = null;
+    try { salvo = localStorage.getItem('revisao-grafos-lateral'); } catch (e) { salvo = null; }
+    if (salvo === 'recolhida') document.body.classList.add('lat-recolhida');
+    const btn = $('#menu');
+    btn.setAttribute('aria-controls', 'lateral');
+    btn.addEventListener('click', () => {
+      if (telaGrande.matches) {
+        const rec = document.body.classList.toggle('lat-recolhida');
+        try { localStorage.setItem('revisao-grafos-lateral', rec ? 'recolhida' : 'aberta'); } catch (e) { /* ok */ }
+      } else {
+        document.body.classList.toggle('menu-aberto');
+      }
+      rotulaMenu();
+    });
+    $('#fecha-menu').addEventListener('click', () => { document.body.classList.remove('menu-aberto'); rotulaMenu(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.body.classList.contains('menu-aberto')) { document.body.classList.remove('menu-aberto'); rotulaMenu(); btn.focus(); }
+    });
+    telaGrande.addEventListener('change', rotulaMenu);
+    rotulaMenu();
+  }
+
   // ------------------------------------------------------------------ render ---
   function render() {
     const r = rotaAtual();
     const main = $('#conteudo');
     if (r.pag === 'inicio') paginaInicio(main);
+    else if (r.pag === 'aulas') paginaAulas(main);
     else paginaModulo(main, r.m, r.aba);
     $$('.lat-mod').forEach((a) => a.classList.toggle('ativo', !!(r.m && a.dataset.id === r.m.id)));
+    $$('.lat-inicio').forEach((a) => {
+      const aqui = a.dataset.pag === r.pag;
+      a.classList.toggle('ativo', aqui);
+      if (aqui) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    });
     document.body.classList.remove('menu-aberto');
+    rotulaMenu();
     window.scrollTo(0, 0);
   }
 
@@ -235,8 +324,7 @@
     montaLateral();
     iniciaTema();
     $('.pular').addEventListener('click', (e) => { e.preventDefault(); $('#conteudo').focus(); });
-    $('#menu').addEventListener('click', () => document.body.classList.toggle('menu-aberto'));
-    $('#fecha-menu').addEventListener('click', () => document.body.classList.remove('menu-aberto'));
+    iniciaLateral();
     const b = $('#busca');
     b.addEventListener('input', () => busca(b.value));
     b.addEventListener('keydown', (e) => { if (e.key === 'Escape') { b.value = ''; busca(''); } });

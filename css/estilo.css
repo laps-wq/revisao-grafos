@@ -478,3 +478,40 @@ th { background: var(--th-bg); color: var(--th-ink); }
 /* rótulos embaixo do último vértice (d = 3, por exemplo) não são cortados na borda do desenho */
 .grafo { overflow: visible; }
 .st-fig { padding-bottom: 6px; }
+
+/* ------------------------------------------------- barra lateral recolhível --- */
+@media (min-width: 981px) {
+  .topo-menu { display: grid; }
+  .casca { transition: grid-template-columns .2s ease; }
+  body.lat-recolhida .casca { grid-template-columns: 0 minmax(0, 1fr); }
+  body.lat-recolhida .lateral { visibility: hidden; overflow: hidden; padding-left: 0; padding-right: 0; border-right-color: transparent; }
+}
+.lat-inicio.ativo { background: var(--accent-soft); }
+
+/* ------------------------------------------------------------ aulas do semestre --- */
+.bloco-aulas { display: flex; align-items: center; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap;
+  padding: 20px 22px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+.bloco-aulas h2 { margin: 0 0 4px; }
+.bloco-aulas .sub { margin: 0; max-width: 62ch; }
+.bloco-aulas .btn, .aula-acoes a { text-decoration: none; display: inline-block; }
+.aulas-tema { margin-top: 34px; }
+.aulas-tema > h2 { margin-bottom: 12px; }
+.aulas-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.aula { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 14px; align-items: start;
+  padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.aula-n { width: 46px; height: 46px; border-radius: 10px; display: grid; place-items: center;
+  font: 700 1.2rem var(--f-display); background: var(--slate); color: var(--surface); }
+.aula-txt h3 { margin: 0 0 3px; font-size: 1.15rem; line-height: 1.25; }
+.aula-txt h3 a { color: var(--ink); text-decoration: none; }
+.aula-txt h3 a:hover { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 3px; }
+.aula-txt p { margin: 0; color: var(--ink-2); font-size: .94rem; line-height: 1.5; }
+.aula-txt .aula-meta { margin-top: 6px; font-size: .82rem; color: var(--ink-3); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
+.aula-mod { font-weight: 600; color: var(--accent-ink); text-decoration: none; }
+.aula-mod:hover { text-decoration: underline; text-underline-offset: 2px; }
+.aula-acoes { display: flex; gap: 6px; align-self: center; }
+.aula-acoes a { padding: 7px 12px; font-size: .88rem; }
+@media (max-width: 560px) {
+  .aula { grid-template-columns: 40px minmax(0, 1fr); gap: 12px; padding: 12px; }
+  .aula-n { width: 40px; height: 40px; font-size: 1.05rem; }
+  .aula-acoes { grid-column: 2; }
+}

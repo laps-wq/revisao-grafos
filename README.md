@@ -24,6 +24,8 @@ São 10 módulos. Cada um tem quatro abas:
 
 As figuras das questões do ENADE foram redesenhadas a partir das provas. As provas, os gabaritos e os padrões de resposta estão no portal do Inep.
 
+A página **Aulas do semestre** (`#aulas`) reúne os slides das aulas de Teoria dos Grafos de 2026.2, em PDF, agrupados por assunto e com o link para o módulo de revisão correspondente. Os arquivos ficam na pasta `aulas/` e a lista, em `js/aulas.js`.
+
 O progresso de cada estudante (desafios feitos e acertos) fica salvo só no navegador dele. O site não coleta dados.
 
 ## Publicar no GitHub Pages
@@ -53,9 +55,11 @@ js/lib.js               peças de interface: questões, classificação, passo a
 js/grafos.js            desenho dos grafos em SVG, algoritmos e laboratórios
 js/app.js               navegação, abas, busca, progresso e tema
 js/modulos/NN-*.js      um arquivo por módulo, com conteúdo, exemplos e questões
+js/aulas.js             lista dos slides das aulas (página #aulas)
+aulas/                  slides das aulas do semestre (PDF e uma aula em HTML)
 ```
 
-Os links são do tipo `#arvores-agm` (aba Conteúdo) e `#arvores-agm-desafios` (aba Desafios). Dá para mandar o link direto de uma aba no Classroom.
+Os links são do tipo `#arvores-agm` (aba Conteúdo), `#arvores-agm-desafios` (aba Desafios) e `#aulas` (slides das aulas). Dá para mandar o link direto de uma aba no Classroom.
 
 ## Como editar
 
@@ -75,6 +79,8 @@ Uma questão de múltipla escolha tem este formato:
   w: { 2: 'Por que a C engana (opcional).' },
 }
 ```
+
+Para acrescentar uma aula, copie o arquivo para `aulas/` e inclua uma linha em `js/aulas.js`, com número, título, descrição, arquivo, número de páginas, tamanho em KB, assunto e o id do módulo relacionado.
 
 Para criar um módulo novo, copie um arquivo de `js/modulos/`, troque o `id` e acrescente a linha do script no `index.html`, antes de `js/app.js`. O módulo aparece sozinho na barra lateral, na página inicial e na busca.
 
