@@ -61,6 +61,8 @@ Os links são do tipo `#arvores-agm` (aba Conteúdo) e `#arvores-agm-desafios` (
 
 Cada módulo é um objeto em `js/modulos/`. Para corrigir um texto, edite o arquivo do módulo e publique de novo.
 
+Depois de mudar qualquer arquivo de `css/` ou `js/`, troque o número `?v=` nas linhas do `index.html` (por exemplo, de `?v=2` para `?v=3`). Assim o navegador dos alunos baixa a versão nova na hora, em vez de usar a cópia guardada.
+
 Uma questão de múltipla escolha tem este formato:
 
 ```js
