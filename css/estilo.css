@@ -450,3 +450,31 @@ tr.dest td { background: var(--accent-soft); }
 @media (max-width: 980px) {
   .trilhas { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* ------------------------------------------------- coluna de leitura central --- */
+/* Uma única coluna centralizada: texto, tabelas, questões e abas com a mesma largura;
+   figuras centralizadas dentro dela. A página inicial usa uma coluna mais larga. */
+.principal > * { max-width: 720px; }
+.principal > .hero, .principal > .bloco { max-width: 980px; }
+.prosa, .mcq-enun, .mod-cab .lead { max-width: none; }
+.fig-estatica { margin-left: auto; margin-right: auto; }
+.lab-fig { margin-left: auto; margin-right: auto; }
+.figs-lado .fig-estatica { margin: .4em 0; }
+.formula { text-align: center; }
+
+/* pseudocódigo: sem faixa de fundo atrás de cada linha */
+.prosa pre code, .codigo code { background: none; padding: 0; border-radius: 0; }
+
+/* cabeçalho das tabelas no tema escuro: fundo ardósia, não creme */
+:root { --th-bg: #232323; --th-ink: #FEF7EE; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --th-bg: #2E3B47; --th-ink: #F3ECE2; } }
+:root[data-theme="dark"] { --th-bg: #2E3B47; --th-ink: #F3ECE2; }
+th { background: var(--th-bg); color: var(--th-ink); }
+
+/* passo a passo na coluna de 720px: figura e tabela em metades iguais; cabeçalho da tabela pode quebrar linha;
+   o desenho já limita a própria largura pelo tamanho do grafo */
+.st-corpo { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.st-tab th { white-space: normal; vertical-align: bottom; }
+/* rótulos embaixo do último vértice (d = 3, por exemplo) não são cortados na borda do desenho */
+.grafo { overflow: visible; }
+.st-fig { padding-bottom: 6px; }
