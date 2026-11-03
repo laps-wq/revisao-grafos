@@ -515,3 +515,21 @@ th { background: var(--th-bg); color: var(--th-ink); }
   .aula-n { width: 40px; height: 40px; font-size: 1.05rem; }
   .aula-acoes { grid-column: 2; }
 }
+
+/* --------------------------------------------- texto justificado e fonte maior --- */
+/* Fonte um pouco maior em todo o site (os tamanhos em rem acompanham a raiz) e coluna um pouco mais larga
+   para manter o tamanho da linha. Parágrafos, listas e textos das questões ficam justificados, com hifenização. */
+html { font-size: 17px; }
+body { font-size: 18px; }
+.principal > * { max-width: 760px; }
+p, li, .card-txt, .opt-t, .st-texto, .qa-q, .qa-r, .mcq-fb, .classif-t, .classif-fb, .ativ-perg {
+  text-align: justify; hyphens: auto; -webkit-hyphens: auto;
+}
+/* linhas curtas de interface continuam alinhadas à esquerda */
+.olho, .lateral-rodape, .busca-res p, .aula-meta, .mod-enade, .desafios-topo p, .card-rodape, figcaption,
+.mcq-fonte, .st-cont, .leg-lab, .vazio, .busca-vazio { text-align: left; hyphens: manual; -webkit-hyphens: manual; }
+@media (max-width: 560px) {
+  html { font-size: 16px; }
+  body { font-size: 17px; }
+}
+.repr .st-tab th, .repr .st-tab td { padding: 4px 6px; text-align: center; }
