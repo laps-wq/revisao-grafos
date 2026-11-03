@@ -24,7 +24,7 @@ São 10 módulos. Cada um tem quatro abas:
 
 As figuras das questões do ENADE foram redesenhadas a partir das provas. As provas, os gabaritos e os padrões de resposta estão no portal do Inep.
 
-A página **Aulas do semestre** (`#aulas`) reúne os slides das aulas de Teoria dos Grafos de 2026.2, em PDF, agrupados por assunto e com o link para o módulo de revisão correspondente. Os arquivos ficam na pasta `aulas/` e a lista, em `js/aulas.js`.
+A página **Aulas e e-book** (`#aulas`) reúne o e-book da disciplina e os slides das aulas de Teoria dos Grafos de 2026.2, em PDF, agrupados por assunto e com o link para o módulo de revisão correspondente. Os arquivos ficam na pasta `aulas/` e a lista, em `js/aulas.js` (o e-book está em `window.EBOOK`, no fim do arquivo).
 
 O progresso de cada estudante (desafios feitos e acertos) fica salvo só no navegador dele. O site não coleta dados.
 
@@ -56,7 +56,7 @@ js/grafos.js            desenho dos grafos em SVG, algoritmos e laboratórios
 js/app.js               navegação, abas, busca, progresso e tema
 js/modulos/NN-*.js      um arquivo por módulo, com conteúdo, exemplos e questões
 js/aulas.js             lista dos slides das aulas (página #aulas)
-aulas/                  slides das aulas do semestre (PDF e uma aula em HTML)
+aulas/                  slides das aulas do semestre (PDF e uma aula em HTML) e o e-book
 ```
 
 Os links são do tipo `#arvores-agm` (aba Conteúdo), `#arvores-agm-desafios` (aba Desafios) e `#aulas` (slides das aulas). Dá para mandar o link direto de uma aba no Classroom.

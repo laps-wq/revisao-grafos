@@ -533,3 +533,23 @@ p, li, .card-txt, .opt-t, .st-texto, .qa-q, .qa-r, .mcq-fb, .classif-t, .classif
   body { font-size: 17px; }
 }
 .repr .st-tab th, .repr .st-tab td { padding: 4px 6px; text-align: center; }
+
+/* e-book em destaque na página de aulas */
+.ebook { display: grid; grid-template-columns: 124px minmax(0, 1fr); gap: 20px; align-items: start;
+  padding: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.ebook-capa img { display: block; width: 124px; height: auto; border-radius: 6px; box-shadow: var(--shadow); }
+.ebook .aula-txt h3 { font-size: 1.3rem; }
+.ebook .aula-acoes { margin-top: 12px; align-self: start; }
+.bloco-aulas-bts { display: flex; flex-wrap: wrap; gap: 8px; }
+.bloco-aulas-bts a { text-decoration: none; display: inline-block; }
+@media (max-width: 560px) {
+  .ebook { grid-template-columns: 84px minmax(0, 1fr); gap: 14px; padding: 14px; }
+  .ebook-capa img { width: 84px; }
+  .ebook .aula-acoes { grid-column: 1 / -1; }
+}
+.nobr { white-space: nowrap; }
+@media (max-width: 560px) {
+  .ebook { display: block; }
+  .ebook::after { content: ""; display: block; clear: both; }
+  .ebook-capa { float: left; margin: 2px 14px 8px 0; }
+}

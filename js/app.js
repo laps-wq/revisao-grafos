@@ -4,6 +4,7 @@
   const { $, $$, h, renderMCQ, renderClassify, renderChecklist, renderQA, lerProgresso, gravarProgresso } = window.UI;
   const MODULOS = window.MODULOS || [];
   const AULAS = window.AULAS || [];
+  const EBOOK = window.EBOOK || null;
   const ABAS = [['conteudo', 'Conteúdo'], ['exemplos', 'Exemplos'], ['atividades', 'Atividades'], ['desafios', 'Desafios']];
   const GRUPOS = ['Base', 'Caminhos e árvores', 'Modelagem e complexidade', 'Prova'];
   let prog = lerProgresso();
@@ -41,7 +42,7 @@
     const nav = $('#lateral-nav');
     nav.replaceChildren();
     nav.append(h('a', { href: '#inicio', class: 'lat-inicio', 'data-pag': 'inicio' }, 'Início'));
-    if (AULAS.length) nav.append(h('a', { href: '#aulas', class: 'lat-inicio lat-aulas', 'data-pag': 'aulas' }, 'Aulas do semestre'));
+    if (AULAS.length) nav.append(h('a', { href: '#aulas', class: 'lat-inicio lat-aulas', 'data-pag': 'aulas' }, EBOOK ? 'Aulas e e-book' : 'Aulas do semestre'));
     GRUPOS.forEach((g) => {
       const ms = MODULOS.filter((m) => m.grupo === g);
       if (!ms.length) return;
@@ -99,9 +100,11 @@
     relampago.append(area, h('button', { class: 'btn', type: 'button', onclick: sorteia }, 'Sortear outra'));
     const aulas = AULAS.length ? h('section', { class: 'bloco bloco-aulas' },
       h('div', {},
-        h('h2', {}, 'Aulas do semestre'),
-        h('p', { class: 'sub' }, `Os slides das ${AULAS.length} aulas de Teoria dos Grafos deste semestre, organizados por assunto, para abrir no navegador ou baixar.`)),
-      h('a', { href: '#aulas', class: 'btn' }, 'Ver as aulas')) : null;
+        h('h2', {}, EBOOK ? 'Aulas e e-book da disciplina' : 'Aulas do semestre'),
+        h('p', { class: 'sub' }, `Os slides das ${AULAS.length} aulas de Teoria dos Grafos deste semestre, organizados por assunto${EBOOK ? ', e o e-book da disciplina, com teoria, exemplos resolvidos e questões no estilo ENADE' : ''}. Para abrir no navegador ou baixar.`)),
+      h('div', { class: 'bloco-aulas-bts' },
+        h('a', { href: '#aulas', class: 'btn' }, 'Ver as aulas'),
+        EBOOK ? h('a', { href: EBOOK.arq, target: '_blank', rel: 'noopener', class: 'btn-sec' }, 'Abrir o e-book') : null)) : null;
     main.replaceChildren(...[hero, comecar, aulas, h('section', { class: 'bloco' }, h('h2', {}, 'Módulos'), grade), relampago].filter(Boolean));
     sorteia();
     document.title = 'Revisão de Teoria dos Grafos · ENADE';
@@ -112,14 +115,29 @@
   }
 
   // ------------------------------------------------------------------- aulas ---
+  // mantém “E-book” numa linha só (o navegador quebraria no hífen)
+  const semQuebra = (txt) => txt.split(/(E-book)/).map((p) => (p === 'E-book' ? h('span', { class: 'nobr' }, p) : p));
   const mb = (kb) => (kb >= 1000 ? `${(kb / 1024).toFixed(1).replace('.', ',')} MB` : `${kb} KB`);
   function paginaAulas(main) {
     const cab = h('header', { class: 'mod-cab' },
       h('p', { class: 'olho' }, 'Material da disciplina · 2026.2'),
       h('h1', {}, 'Aulas do semestre'),
-      h('p', { class: 'lead' }, 'Slides das aulas de Teoria dos Grafos da Profª Laura Pacífico na CESAR School, de agosto a outubro de 2026. Cada aula indica o módulo de revisão do mesmo assunto.'));
+      h('p', { class: 'lead' }, `Slides das aulas de Teoria dos Grafos da Profª Laura Pacífico na CESAR School, de agosto a outubro de 2026${EBOOK ? ', e o e-book da disciplina' : ''}. Cada aula indica o módulo de revisão do mesmo assunto.`));
     const temas = [...new Set(AULAS.map((a) => a.tema))];
     const corpo = h('div', { class: 'aulas' });
+    if (EBOOK) {
+      corpo.append(h('section', { class: 'aulas-tema' }, h('h2', {}, 'E-book da disciplina'),
+        h('div', { class: 'ebook' },
+          h('a', { href: EBOOK.arq, target: '_blank', rel: 'noopener', class: 'ebook-capa', 'aria-hidden': 'true', tabindex: '-1' },
+            h('img', { src: EBOOK.capa, alt: '', width: '124', height: '175', loading: 'lazy' })),
+          h('div', { class: 'aula-txt' },
+            h('h3', {}, h('a', { href: EBOOK.arq, target: '_blank', rel: 'noopener' }, ...semQuebra(EBOOK.tit))),
+            h('p', {}, EBOOK.desc),
+            h('p', { class: 'aula-meta' }, `${EBOOK.pags} páginas · PDF · ${mb(EBOOK.kb)}`),
+            h('div', { class: 'aula-acoes' },
+              h('a', { href: EBOOK.arq, target: '_blank', rel: 'noopener', class: 'btn' }, 'Abrir o e-book'),
+              h('a', { href: EBOOK.arq, download: '', class: 'btn-sec' }, 'Baixar'))))));
+    }
     temas.forEach((tema) => {
       const lista = h('ul', { class: 'aulas-lista' });
       AULAS.filter((a) => a.tema === tema).forEach((a) => {
@@ -219,6 +237,7 @@
       m.desafios.forEach((q, i) => indice.push({ m, aba: 'desafios', tit: `Desafio ${i + 1}`, txt: tira(q.enun) }));
     });
     AULAS.forEach((a) => indice.push({ href: '#aulas', rot: 'Aulas do semestre', tit: `Aula ${a.n} · ${a.tit}`, txt: a.desc }));
+    if (EBOOK) indice.push({ href: '#aulas', rot: 'Aulas do semestre', tit: 'E-book da disciplina', txt: EBOOK.desc, chave: 'ebook livro apostila pdf' });
   }
   const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   function busca(termo) {
@@ -226,7 +245,7 @@
     const t = norm(termo.trim());
     if (t.length < 2) { box.hidden = true; return; }
     if (!indice) montaIndice();
-    const achados = indice.filter((x) => norm(x.tit + ' ' + x.txt).includes(t)).slice(0, 12);
+    const achados = indice.filter((x) => norm(x.tit + ' ' + x.txt + ' ' + (x.chave || '')).includes(t)).slice(0, 12);
     box.replaceChildren();
     if (!achados.length) box.append(h('p', { class: 'busca-vazio' }, 'Nada encontrado. Tente outra palavra, como “Dijkstra” ou “clique”.'));
     achados.forEach((x) => {

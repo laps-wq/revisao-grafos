@@ -21,3 +21,13 @@ window.AULAS = [
   { n: '19', tit: 'Fluxo em redes', desc: 'Capacidade, conservação, caminhos aumentantes, Ford-Fulkerson e corte mínimo.', arq: 'aulas/aula-19-fluxo-em-redes.pdf', pags: 29, kb: 379, tema: 'Coloração e fluxo', mod: 'fluxo' },
   { n: '26', tit: 'Bancos de dados de grafos: Neo4j', desc: 'NoSQL, o modelo de grafo, o Neo4j AuraDB e consultas em Cypher.', arq: 'aulas/aula-26-neo4j.pdf', pags: 44, kb: 1407, tema: 'Grafos na prática', mod: null },
 ];
+
+/* E-book da disciplina, mostrado em destaque no topo da página #aulas. */
+window.EBOOK = {
+  tit: 'Teoria dos Grafos · E-book da disciplina',
+  desc: 'Nove capítulos, dos conceitos fundamentais a fluxos e emparelhamentos, com exemplos resolvidos passo a passo, questões no estilo ENADE com gabarito comentado, exercícios com respostas e um quadro-resumo dos algoritmos.',
+  arq: 'aulas/teoria-dos-grafos-ebook.pdf',
+  capa: 'aulas/ebook-capa.jpg',
+  pags: 44,
+  kb: 4084,
+};
